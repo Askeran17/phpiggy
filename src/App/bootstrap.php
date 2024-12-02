@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 require __DIR__ . "/../../vendor/autoload.php";
 
-// Подключите файл, содержащий функцию registerRoutes
-require __DIR__ . "/Config/routes.php"; // Убедитесь, что путь правильный
+require __DIR__ . "/Config/routes.php";
 
 use Framework\App;
 use function App\Config\registerRoutes;
