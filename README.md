@@ -73,13 +73,6 @@ Views are stored in `src/App/views/` and use the custom template engine.
 
 ## Development
 
-### Running Tests
-
-```bash
-# Add your test commands here when implemented
-composer test
-```
-
 ### Code Style
 
 This project follows PSR-4 autoloading standards and modern PHP practices.
