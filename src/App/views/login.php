@@ -5,6 +5,12 @@
     <h2 class="text-xl md:text-2xl font-bold text-gray-900 mb-6 text-center">Login to Your Account</h2>
     <form method="POST" class="grid grid-cols-1 gap-4 md:gap-6">
     <?php include $this->resolve("partials/_csrf.php"); ?>
+    
+    <?php if (array_key_exists('general', $errors)): ?>
+    <div class="bg-red-50 border border-red-200 p-3 text-red-600 text-sm rounded mb-4">
+      <?php echo e($errors['general'][0]); ?>
+    </div>
+    <?php endif; ?>
 
       <label class="block">
         <span class="text-gray-700 text-sm md:text-base font-medium">Email address</span>
