@@ -22,8 +22,15 @@ class Database
         if ($driver === 'mysql' && isset($config['unix_socket']) && !empty($config['unix_socket'])) {
             // Local development with MAMP
             $dsn = "mysql:unix_socket={$config['unix_socket']};dbname={$config['dbname']}";
+        } elseif ($driver === 'pgsql') {
+            // PostgreSQL connection - only use valid PostgreSQL options
+            $dsnParts = [];
+            if (isset($config['host'])) $dsnParts[] = "host={$config['host']}";
+            if (isset($config['port'])) $dsnParts[] = "port={$config['port']}";
+            if (isset($config['dbname'])) $dsnParts[] = "dbname={$config['dbname']}";
+            $dsn = "{$driver}:" . implode(';', $dsnParts);
         } else {
-            // Production or standard MySQL connection
+            // Standard MySQL connection
             $config = http_build_query(data: $config, arg_separator: ';');
             $dsn = "{$driver}:{$config}";
         }
