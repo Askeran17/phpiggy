@@ -11,6 +11,17 @@ class TransactionService
     public function __construct(private Database $db) {
         
     }
+    
+    private function getDateFormat(): string
+    {
+        // Check if we're using PostgreSQL or MySQL
+        $driver = $_ENV['DB_DRIVER'] ?? 'mysql';
+        if ($driver === 'pgsql') {
+            return "TO_CHAR(date, 'YYYY-MM-DD') as formatted_date";
+        } else {
+            return "DATE_FORMAT(date, '%Y-%m-%d') as formatted_date";
+        }
+    }
 
     public function create(array $formData) 
     {
@@ -39,8 +50,9 @@ class TransactionService
         ];
         
 
+        $dateFormat = $this->getDateFormat();
         $transactions = $this->db->query(
-            "SELECT *, DATE_FORMAT(date, '%Y-%m-%d') as formatted_date
+            "SELECT *, {$dateFormat}
             FROM transactions 
             WHERE user_id = :user_id
             AND description LIKE :description
@@ -72,8 +84,9 @@ class TransactionService
 
     public function getUserTransaction(int $id)
     {
+        $dateFormat = $this->getDateFormat();
         return $this->db->query(
-            "SELECT *, DATE_FORMAT(date, '%Y-%m-%d') as formatted_date
+            "SELECT *, {$dateFormat}
             FROM transactions 
             WHERE id = :id
             AND user_id = :user_id",
