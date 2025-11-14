@@ -30,6 +30,9 @@ COPY . /var/www/html
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
 
+# Set ServerName to suppress Apache warnings
+RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
+
 # Copy custom Apache configuration
 RUN echo '<VirtualHost *:80>\n\
     DocumentRoot /var/www/html/public\n\
