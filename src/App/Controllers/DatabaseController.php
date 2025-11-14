@@ -12,13 +12,18 @@ class DatabaseController
         echo "<p>Using system environment variables...</p>";
 
         try {
-            // Get database configuration from environment variables
-            $driver = $_ENV['DB_DRIVER'];
-            $host = $_ENV['DB_HOST'];
-            $port = $_ENV['DB_PORT'];
-            $database = $_ENV['DB_DATABASE'];
-            $username = $_ENV['DB_USERNAME'];
-            $password = $_ENV['DB_PASSWORD'];
+            // Get database configuration from environment variables (same as container-definitions.php)
+            $driver = $_ENV['DB_DRIVER'] ?? 'mysql';
+            $host = $_ENV['DB_HOST'] ?? 'localhost';
+            $port = $_ENV['DB_PORT'] ?? '3306';
+            $database = $_ENV['DB_NAME']; // Note: DB_NAME not DB_DATABASE
+            $username = $_ENV['DB_USER']; // Note: DB_USER not DB_USERNAME  
+            $password = $_ENV['DB_PASS']; // Note: DB_PASS not DB_PASSWORD
+            
+            // Debug info
+            echo "<p>Driver: " . ($driver ?: 'NOT SET') . "</p>";
+            echo "<p>Host: " . ($host ?: 'NOT SET') . "</p>";
+            echo "<p>Database: " . ($database ?: 'NOT SET') . "</p>";
             
             // Validate required environment variables
             if (!$driver || !$host || !$port || !$database || !$username) {

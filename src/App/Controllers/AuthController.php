@@ -51,7 +51,7 @@ class AuthController
             $_SESSION['old'] = $_POST;
             redirectTo('/login');
         } catch (Exception $e) {
-            $_SESSION['errors'] = ['general' => ['Произошла ошибка при входе в систему. Попробуйте еще раз.']];
+            $_SESSION['errors'] = ['general' => ['An error occurred while logging in. Please try again.']];
             $_SESSION['old'] = $_POST;
             redirectTo('/login');
         }
