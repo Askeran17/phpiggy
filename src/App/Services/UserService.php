@@ -60,7 +60,7 @@ class UserService
         );
 
         if (!$user || !$passwordsMatch) {
-            throw new ValidationException(['password' => 'Invalid email or password'] );
+            throw new ValidationException(['password' => ['Invalid email or password']] );
         }
 
         session_regenerate_id();    
