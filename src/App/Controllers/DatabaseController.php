@@ -8,20 +8,8 @@ class DatabaseController
 {
     public function initialize()
     {
-        // Database initialization script
-        require_once __DIR__ . '/../../vendor/autoload.php';
-
         echo "<h2>Database Initialization</h2>";
-
-        // Load environment variables for local development, or use system ENV for production
-        if (file_exists(__DIR__ . '/../../../.env')) {
-            $dotenv = \Dotenv\Dotenv::createImmutable(__DIR__ . '/../../..');
-            $dotenv->load();
-            echo "<p>Loaded local .env file...</p>";
-        } else {
-            // Use environment variables directly (for Docker/Render)
-            echo "<p>Using system environment variables...</p>";
-        }
+        echo "<p>Using system environment variables...</p>";
 
         try {
             // Get database configuration from environment variables
@@ -54,8 +42,9 @@ class DatabaseController
 
             echo "<p style='color: green;'>✅ Connected to the database successfully!</p>";
 
-            // Choose SQL file based on database driver
-            $sqlFile = $driver === 'pgsql' ? __DIR__ . '/../../../database-postgresql.sql' : __DIR__ . '/../../../database-mysql.sql';
+            // Choose SQL file based on database driver  
+            $rootDir = dirname(dirname(dirname(__DIR__)));
+            $sqlFile = $driver === 'pgsql' ? $rootDir . '/database-postgresql.sql' : $rootDir . '/database-mysql.sql';
             
             echo "<p>Using SQL file: " . basename($sqlFile) . "</p>";
             
