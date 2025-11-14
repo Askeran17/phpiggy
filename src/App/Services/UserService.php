@@ -45,9 +45,7 @@ class UserService
         );
 
         session_regenerate_id();
-        $_SESSION['user'] = $this->db->id(
-            
-        );
+        $_SESSION['user_id'] = $this->db->id();
 
     }
 
@@ -62,7 +60,7 @@ class UserService
         );
 
         if (!$user || !$passwordsMatch) {
-            throw new ValidationException(['password' => ['Неправильный email или пароль']] );
+            throw new ValidationException(['password' => 'Invalid email or password'] );
         }
 
         session_regenerate_id();    
