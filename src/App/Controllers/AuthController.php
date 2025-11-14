@@ -6,6 +6,8 @@ namespace App\Controllers;
 
 use Framework\TemplateEngine;
 use App\Services\{ValidatorService, UserService};
+use Framework\Exceptions\ValidationException;
+use Exception;
 
 class AuthController
 {
@@ -38,12 +40,21 @@ class AuthController
 
     public function login() 
     {
-       $this->validatorService->validateLogin($_POST);
-
-       $this->userService->login($_POST);
-
-        $_SESSION['flash'] = 'Welcome! You have successfully logged in.';
-        redirectTo('/');
+        try {
+            $this->validatorService->validateLogin($_POST);
+            $this->userService->login($_POST);
+            
+            $_SESSION['flash'] = 'Welcome! You have successfully logged in.';
+            redirectTo('/');
+        } catch (ValidationException $e) {
+            $_SESSION['errors'] = $e->errors;
+            $_SESSION['old'] = $_POST;
+            redirectTo('/login');
+        } catch (Exception $e) {
+            $_SESSION['errors'] = ['general' => ['Произошла ошибка при входе в систему. Попробуйте еще раз.']];
+            $_SESSION['old'] = $_POST;
+            redirectTo('/login');
+        }
     }
 
     public function logout() 

@@ -14,9 +14,30 @@ if (file_exists(__DIR__ . '/.env')) {
 }
 
 try {
+    // Get database configuration from environment variables
+    $driver = $_ENV['DB_DRIVER'];
+    $host = $_ENV['DB_HOST'];
+    $port = $_ENV['DB_PORT'];
+    $database = $_ENV['DB_DATABASE'];
+    $username = $_ENV['DB_USERNAME'];
+    $password = $_ENV['DB_PASSWORD'];
+    
+    // Validate required environment variables
+    if (!$driver || !$host || !$port || !$database || !$username) {
+        throw new Exception('Missing required database environment variables');
+    }
+    
+    echo "Connecting to database...\n";
+    
+    // Create DSN based on driver
+    if ($driver === 'pgsql') {
+        $dsn = "pgsql:host={$host};port={$port};dbname={$database}";
+    } else {
+        $dsn = "mysql:host={$host};port={$port};dbname={$database}";
+    }
+    
     // Create database connection
-    $dsn = "mysql:host={$_ENV['DB_HOST']};port={$_ENV['DB_PORT']};dbname={$_ENV['DB_NAME']}";
-    $pdo = new PDO($dsn, $_ENV['DB_USER'], $_ENV['DB_PASS'], [
+    $pdo = new PDO($dsn, $username, $password, [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
     ]);
@@ -24,10 +45,9 @@ try {
     echo "Connected to the database successfully!\n";
 
     // Choose SQL file based on database driver
-    $driver = $_ENV['DB_DRIVER'] ?? 'mysql';
     $sqlFile = $driver === 'pgsql' ? './database-postgresql.sql' : './database-mysql.sql';
     
-    echo "Using SQL file: $sqlFile for driver: $driver\n";
+    echo "Using SQL file: $sqlFile\n";
     
     // Read and execute SQL file
     $sqlfile = file_get_contents($sqlFile);
