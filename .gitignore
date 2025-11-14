@@ -3,6 +3,8 @@ composer.phar
 imaginary-file.txt
 .DS_Store
 .env
+.env.local
+docker-compose.yml
 storage/uploads/*
 !storage/uploads/.gitkeep
 

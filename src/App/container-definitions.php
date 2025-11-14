@@ -12,7 +12,9 @@ return [
   ValidatorService::class => fn() => new ValidatorService(),
   Database::class => fn() => new Database(
     $_ENV['DB_DRIVER'], [
-      'unix_socket' => $_ENV['DB_SOCKET'],
+      'unix_socket' => $_ENV['DB_SOCKET'] ?? '',
+      'host' => $_ENV['DB_HOST'] ?? 'localhost',
+      'port' => $_ENV['DB_PORT'] ?? '3306',
       'dbname' => $_ENV['DB_NAME'],
     ], $_ENV['DB_USER'], $_ENV['DB_PASS']
   ),

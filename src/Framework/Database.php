@@ -19,9 +19,11 @@ class Database
         string $password
         )
     {
-        if ($driver === 'mysql' && isset($config['unix_socket'])) {
+        if ($driver === 'mysql' && isset($config['unix_socket']) && !empty($config['unix_socket'])) {
+            // Local development with MAMP
             $dsn = "mysql:unix_socket={$config['unix_socket']};dbname={$config['dbname']}";
         } else {
+            // Production or standard MySQL connection
             $config = http_build_query(data: $config, arg_separator: ';');
             $dsn = "{$driver}:{$config}";
         }

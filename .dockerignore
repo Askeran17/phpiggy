@@ -1,0 +1,29 @@
+# Git files
+.git
+.gitignore
+README.md
+
+# Environment files (security)
+.env
+.env.local
+.env.example
+
+# Docker files (not needed inside container)
+Dockerfile
+.dockerignore
+docker-compose.yml
+
+# Dependencies (will be installed inside container)
+vendor/
+node_modules/
+npm-debug.log
+
+# Development tools
+cli.php
+
+# Uploads (empty folder will be created)
+storage/uploads/*
+!storage/uploads/.gitkeep
+
+# macOS
+.DS_Store
