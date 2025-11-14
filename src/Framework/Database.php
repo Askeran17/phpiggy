@@ -60,7 +60,8 @@ try {
 
     public function find(): ?array
     {
-        return $this->stmt->fetch();
+        $result = $this->stmt->fetch();
+        return $result === false ? null : $result;
     }
 
     public function id()
