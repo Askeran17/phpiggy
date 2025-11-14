@@ -1,13 +1,14 @@
 <?php include $this->resolve("partials/_header.php"); ?>
 
-<section
-  class="max-w-2xl mx-auto mt-12 p-4 bg-white shadow-md border border-gray-200 rounded"
-> 
-  <form method="POST" class="grid grid-cols-1 gap-6"> 
-    <!-- Email -->
+<section class="max-w-2xl mx-auto mt-4 md:mt-12 px-4 lg:px-0">
+  <div class="bg-white shadow-md border border-gray-200 rounded-lg p-4 md:p-6">
+    <h2 class="text-xl md:text-2xl font-bold text-gray-900 mb-6 text-center">Create Your Account</h2>
+    <form method="POST" class="grid grid-cols-1 gap-4 md:gap-6">
+    <?php include $this->resolve("partials/_csrf.php"); ?>
+    <!-- Email -->  
     <label class="block">
       <span class="text-gray-700">Email address</span>
-      <input
+      <input value="<?php echo e($oldFormData['email'] ?? ''); ?>"
         name="email"
         type="email"
         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
@@ -22,7 +23,7 @@
     <!-- Age -->
     <label class="block">
       <span class="text-gray-700">Age</span>
-      <input
+      <input value="<?php echo e($oldFormData['age'] ?? ''); ?>"
         name="age"
         type="number"
         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
@@ -41,9 +42,9 @@
         name="country"
         class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
       >
-        <option value="USA">USA</option>
-        <option value="Canada">Canada</option>
-        <option value="Mexico">Mexico</option>
+        <option value="USA" <?php echo (isset($oldFormData['country']) && $oldFormData['country'] === 'USA') ? 'selected' : ''; ?>>USA</option>
+        <option value="Canada" <?php echo (isset($oldFormData['country']) && $oldFormData['country'] === 'Canada') ? 'selected' : ''; ?>>Canada</option>
+        <option value="Mexico" <?php echo (isset($oldFormData['country']) && $oldFormData['country'] === 'Mexico') ? 'selected' : ''; ?>>Mexico</option>
         <option value="Invalid">Invalid Country</option>
       </select>
         <?php if (array_key_exists('country', $errors)) : ?>
@@ -54,8 +55,8 @@
     </label>
     <!-- Social Media URL -->
     <label class="block">
-      <span class="text-gray-700">Social Media URL</span>
-      <input
+      <span class="text-gray-700">Social Media URL <span class="text-gray-500 text-sm">(optional)</span></span>
+      <input value="<?php echo e($oldFormData['socialMediaURL'] ?? ''); ?>"
         name="socialMediaURL"
         type="text"
         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
@@ -102,7 +103,7 @@
       <div class="mt-2">
         <div>
           <label class="inline-flex items-center">
-            <input
+            <input <?php echo $oldFormData['tos'] ?? false ? 'checked' : ''; ?>
               name="tos"
               class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-offset-0 focus:ring-indigo-200 focus:ring-opacity-50"
               type="checkbox"
@@ -117,13 +118,18 @@
         </div>
       </div>
     </div>
-    <button
-      type="submit"
-      class="block w-full py-2 bg-indigo-600 text-white rounded"
-    >
-      Submit
-    </button>
-  </form>
+          <button type="submit" class="block w-full mt-2 py-2 bg-indigo-600 text-white rounded">
+        Create Account
+      </button>
+      
+      <div class="text-center mt-4">
+        <p class="text-sm text-gray-600">
+          Already have an account? 
+          <a href="/login" class="text-indigo-600 hover:text-indigo-500 font-medium">Sign in here</a>
+        </p>
+      </div>
+    </form>
+  </div>
 </section>
 
 <?php include $this->resolve("partials/_footer.php"); ?>
