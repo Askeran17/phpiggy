@@ -2,6 +2,8 @@
 
 A modern PHP application for tracking personal expenses and managing your budget effectively. Built with a custom MVC framework and deployed on cloud infrastructure with persistent file storage.
 
+![PHPiggy Homepage](public/assets/screen.png)
+
 ## Features
 
 - **💰 Expense Tracking**: Add, view, edit, and delete your daily expenses

@@ -11,23 +11,30 @@ use Cloudinary\Cloudinary;
 
 class ReceiptService
 {
-    private Cloudinary $cloudinary;
+    private ?Cloudinary $cloudinary = null;
+    private bool $useCloudStorage = false;
     
     public function __construct(private Database $db) {
-        // Initialize Cloudinary with URL (contains all credentials)
+        // Check if Cloudinary should be used (only in production)
         $cloudinaryUrl = $_ENV['CLOUDINARY_URL'] ?? '';
+        
         if ($cloudinaryUrl && str_starts_with($cloudinaryUrl, 'cloudinary://')) {
             $this->cloudinary = new Cloudinary($cloudinaryUrl);
-        } else {
+            $this->useCloudStorage = true;
+        } elseif (!empty($_ENV['CLOUDINARY_CLOUD_NAME']) && 
+                  !empty($_ENV['CLOUDINARY_API_KEY']) && 
+                  !empty($_ENV['CLOUDINARY_API_SECRET'])) {
             // Fallback to individual credentials
             $this->cloudinary = new Cloudinary([
                 'cloud' => [
-                    'cloud_name' => $_ENV['CLOUDINARY_CLOUD_NAME'] ?? '',
-                    'api_key' => $_ENV['CLOUDINARY_API_KEY'] ?? '',
-                    'api_secret' => $_ENV['CLOUDINARY_API_SECRET'] ?? '',
+                    'cloud_name' => $_ENV['CLOUDINARY_CLOUD_NAME'],
+                    'api_key' => $_ENV['CLOUDINARY_API_KEY'],
+                    'api_secret' => $_ENV['CLOUDINARY_API_SECRET'],
                 ]
             ]);
+            $this->useCloudStorage = true;
         }
+        // If no Cloudinary config, use local storage (development mode)
     }
 
     public function validateFile(?array $file) {
@@ -65,21 +72,38 @@ class ReceiptService
 
     public function upload(array $file, int $transaction) {
         try {
-            // Upload to Cloudinary
-            $result = $this->cloudinary->uploadApi()->upload($file['tmp_name'], [
-                'folder' => 'phpiggy/receipts',
-                'public_id' => 'receipt_' . $transaction . '_' . bin2hex(random_bytes(8)),
-                'resource_type' => 'auto' // auto-detect file type
-            ]);
+            if ($this->useCloudStorage && $this->cloudinary) {
+                // Upload to Cloudinary (production)
+                $result = $this->cloudinary->uploadApi()->upload($file['tmp_name'], [
+                    'folder' => 'phpiggy/receipts',
+                    'public_id' => 'receipt_' . $transaction . '_' . bin2hex(random_bytes(8)),
+                    'resource_type' => 'auto'
+                ]);
 
-            // Save to database with Cloudinary URL
+                $storageFilename = $result['secure_url'];
+            } else {
+                // Local file storage (development)
+                $fileExtension = pathinfo($file['name'], PATHINFO_EXTENSION);
+                $newFilename = bin2hex(random_bytes(16)) . "." . $fileExtension;
+                $uploadPath = Paths::STORAGE_UPLOADS . '/' . $newFilename;
+
+                if (!move_uploaded_file($file['tmp_name'], $uploadPath)) {
+                    throw new ValidationException([
+                        'receipt' => ['Failed to upload file']
+                    ]);
+                }
+
+                $storageFilename = $newFilename;
+            }
+
+            // Save to database
             $this->db->query(
                 "INSERT INTO receipts (transaction_id, original_filename, storage_filename, media_type)
                 VALUES (:transaction_id, :original_filename, :storage_filename, :media_type)",
                 [
                     'transaction_id' => $transaction,
                     'original_filename' => $file['name'],
-                    'storage_filename' => $result['secure_url'], // Cloudinary URL
+                    'storage_filename' => $storageFilename,
                     'media_type' => $file['type']
                 ]
             );
@@ -88,7 +112,6 @@ class ReceiptService
                 'receipt' => ['Failed to upload file: ' . $e->getMessage()]
             ]);
         }
-
     }
 
     public function getReceipt(string $id) {
@@ -125,31 +148,33 @@ class ReceiptService
     }
 
     public function delete(array $receipt) {
-        // Check if it's a Cloudinary URL
+        // Check if it's a Cloudinary URL (cloud storage)
         if (str_starts_with($receipt['storage_filename'], 'https://')) {
-            try {
-                // Extract public_id from Cloudinary URL for deletion
-                $urlParts = parse_url($receipt['storage_filename']);
-                $pathParts = explode('/', $urlParts['path']);
-                // Find public_id (usually after version number)
-                $publicId = null;
-                for ($i = 0; $i < count($pathParts); $i++) {
-                    if (str_starts_with($pathParts[$i], 'v') && is_numeric(substr($pathParts[$i], 1))) {
-                        $publicId = implode('/', array_slice($pathParts, $i + 1));
-                        $publicId = pathinfo($publicId, PATHINFO_FILENAME); // Remove extension
-                        break;
+            if ($this->useCloudStorage && $this->cloudinary) {
+                try {
+                    // Extract public_id from Cloudinary URL for deletion
+                    $urlParts = parse_url($receipt['storage_filename']);
+                    $pathParts = explode('/', $urlParts['path']);
+                    // Find public_id (usually after version number)
+                    $publicId = null;
+                    for ($i = 0; $i < count($pathParts); $i++) {
+                        if (str_starts_with($pathParts[$i], 'v') && is_numeric(substr($pathParts[$i], 1))) {
+                            $publicId = implode('/', array_slice($pathParts, $i + 1));
+                            $publicId = pathinfo($publicId, PATHINFO_FILENAME); // Remove extension
+                            break;
+                        }
                     }
+                    
+                    if ($publicId) {
+                        $this->cloudinary->uploadApi()->destroy($publicId);
+                    }
+                } catch (\Exception $e) {
+                    // Log error but continue with database deletion
+                    error_log("Failed to delete from Cloudinary: " . $e->getMessage());
                 }
-                
-                if ($publicId) {
-                    $this->cloudinary->uploadApi()->destroy($publicId);
-                }
-            } catch (\Exception $e) {
-                // Log error but continue with database deletion
-                error_log("Failed to delete from Cloudinary: " . $e->getMessage());
             }
         } else {
-            // Legacy local file deletion
+            // Local file deletion
             $filePath = Paths::STORAGE_UPLOADS . '/' . $receipt['storage_filename'];
             if (file_exists($filePath)) {
                 unlink($filePath);

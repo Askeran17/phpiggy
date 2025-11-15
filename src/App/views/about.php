@@ -24,7 +24,7 @@
 
     <!-- Key Features -->
     <div class="text-center">
-      <h2 class="text-2xl font-semibold text-gray-800 mb-4">Features</h2>
+      <h2 class="text-2xl font-semibold text-gray-800 mt-4 mb-4">Features</h2>
       <div class="space-y-3">
         <p class="text-gray-700">• Track income and expenses</p>
         <p class="text-gray-700">• View financial reports</p>
@@ -36,7 +36,7 @@
 
     <!-- Technology -->
     <div class="text-center">
-      <h2 class="text-2xl font-semibold text-gray-800 mb-4">Built With</h2>
+      <h2 class="text-2xl font-semibold text-gray-800 mt-4 mb-4">Built With</h2>
       <div class="flex justify-center gap-6">
         <div class="bg-blue-50 p-4 rounded-lg">
           <h3 class="font-semibold text-blue-800 text-lg">PHP</h3>
@@ -51,7 +51,7 @@
 
     <!-- Get Started -->
     <div class="bg-gray-50 p-6 rounded-lg text-center">
-      <h2 class="text-2xl font-semibold text-gray-800 mb-4">Get Started</h2>
+      <h2 class="text-2xl font-semibold text-gray-800 mt-4 mb-4">Get Started</h2>
       <p class="text-gray-700 mb-6 text-lg">Ready to track your expenses?</p>
       <div class="flex justify-center gap-4">
         <a href="/register" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg">
