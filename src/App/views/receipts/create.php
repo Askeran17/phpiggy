@@ -1,11 +1,6 @@
 <?php include $this->resolve("partials/_header.php"); ?>
 
 <section class="max-w-2xl mx-auto mt-12 p-4 bg-white shadow-md border border-gray-200 rounded">
-  <div class="bg-blue-50 border border-blue-200 p-4 rounded mb-6">
-    <p class="text-blue-800 text-sm">
-      📁 Files are now stored securely in the cloud and will be permanently available.
-    </p>
-  </div>
   
   <form enctype="multipart/form-data" method="POST" class="grid grid-cols-1 gap-6">
     <?php include $this->resolve("partials/_csrf.php"); ?>
