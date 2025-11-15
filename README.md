@@ -15,7 +15,7 @@ A modern PHP application for tracking personal expenses and managing your budget
 - **🗄️ Multi-Database Support**: Works with MySQL (local) and PostgreSQL (production)
 - **🐳 Docker Ready**: Containerized for easy deployment
 - **🔐 User Authentication**: Secure login and session management
-- **🎨 Modern UI**: Clean interface built with Tailwind CSS
+- **🎨 Modern UI**: Clean interface with CSS utility classes
 - **🚀 Cloud Deployment**: Production-ready deployment on Render
 
 ## Tech Stack
@@ -23,9 +23,9 @@ A modern PHP application for tracking personal expenses and managing your budget
 - **Backend**: PHP 8.2+ with custom MVC framework
 - **Database**: MySQL (development) / PostgreSQL (production via Neon)
 - **File Storage**: Cloudinary CDN for persistent receipt storage
-- **Frontend**: Tailwind CSS for responsive design
+- **Frontend**: Custom CSS with utility classes for responsive design
 - **Deployment**: Docker + Render cloud hosting
-- **Development**: Composer, PSR-4 autoloading
+- **Development**: Composer, PSR-4 autoloading, Custom CSS
 
 ## Requirements
 
@@ -211,3 +211,13 @@ docker build -t phpiggy .
 # Run container
 docker run -p 8000:80 phpiggy
 ```
+
+## Course Information
+
+This project was developed as part of a comprehensive PHP course on Udemy, taught by **Luis Ramirez**. The course provided hands-on experience in building modern PHP applications with custom MVC frameworks, database management, and cloud deployment.
+
+**📜 [View Certificate](https://www.udemy.com/certificate/UC-9666a43e-c817-4405-8edd-abd95ab69bb4/)**
+
+## License
+
+This project is open source.
